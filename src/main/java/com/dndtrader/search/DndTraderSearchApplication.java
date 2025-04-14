@@ -9,5 +9,4 @@ public class DndTraderSearchApplication {
     public static void main(String[] args) {
         SpringApplication.run(DndTraderSearchApplication.class, args);
     }
-
 }
