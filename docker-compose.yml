@@ -1,0 +1,123 @@
+version: "2.2"
+
+services:
+  mongodb:
+    image: mongo
+    container_name: mongodb_container
+    environment:
+       - MONGO_INITDB_DATABASE=dnd-trader-item-db
+       - MONGO_INITDB_ROOT_USERNAME=root_admin
+       - MONGO_INITDB_ROOT_PASSWORD=31415926
+    ports:
+      - 27017:27017
+    networks:
+      - mongodb_network
+    volumes:
+      # seeding scripts
+      - ./mongo-entrypoint:/docker-entrypoint-initdb.d
+      - ./data:/data/db
+      - ./data:/data/configdb
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: elasticsearch
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - "xpack.security.enabled=false"
+      - "xpack.security.authc.api_key.enabled=false"
+      - "xpack.security.authc.token.enabled=false"
+      #      - discovery.seed_hosts=elasticsearch
+      #      - cluster.initial_master_nodes=elasticsearch
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    volumes:
+      - ./elastic-data:/usr/share/elasticsearch/data
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9300:9300
+      - 9200:9200
+    networks:
+      - mongodb_network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.13.4
+    container_name: kibana
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9300"
+    ports:
+      - 5601:5601
+    networks:
+      - mongodb_network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.2.0
+    container_name: logstash
+    command: logstash -f /etc/logstash/conf.d/logstash.conf
+    volumes:
+      - ./config:/etc/logstash/conf.d
+    ports:
+      - "5000:5000"
+    networks:
+      - mongodb_network
+
+  elastic-connectors:
+    image: docker.elastic.co/enterprise-search/elastic-connectors:8.13.4.0
+    depends_on:
+      - elasticsearch
+      - kibana
+    volumes:
+      - ./connectors-config:/config
+    command: /app/bin/elastic-ingest -c /config/config.yml
+    networks:
+      - mongodb_network
+
+networks:
+  mongodb_network:
+    driver: bridge
+
+#version: '3'
+#
+#services:
+
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+#    environment:
+#      - "discovery.type=single-node"
+#      - "ES_JAVA_OPTS=-Xms256m -Xmx256m"
+#      - "xpack.security.enabled=true"
+#      - "xpack.security.authc.api_key.enabled=true"
+#      - "xpack.security.authc.token.enabled=true"
+#      - "ELASTIC_PASSWORD=password"
+#      - "action.destructive_requires_name=false"
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    networks:
+#      - mongodb_network
+#    ports:
+#      - 9200:9200
+#    volumes:
+#      - ./elastic-data:/usr/share/elasticsearch/data
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:8.13.4
+#    ports:
+#      - 5601:5601
+#    depends_on:
+#      - elasticsearch
+#    networks:
+#      - mongodb_network
+#    environment:
+#      ELASTICSEARCH_URL: http://elasticsearch:9200
+#      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+#      ELASTICSEARCH_USERNAME: kibana_system
+#      ELASTICSEARCH_PASSWORD: CVLnj87HQTAuRX9=er95
+#      XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY: c69548d9027afcf4d55146b1d425a9f4c69548d9027afcf4d55146b1d425a9f4
+#
+
+#
