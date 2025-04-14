@@ -4,6 +4,13 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+.mvn/
+config/
+connectors-config/
+data/
+elastic-data/
+mongo-entrypoint/
+
 ### STS ###
 .apt_generated
 .classpath
