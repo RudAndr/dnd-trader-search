@@ -15,11 +15,11 @@ node {
     }
   }
 
-//   stage("Running unit tests") {
-//     dir('search-service') {
-//       sh "./mvnw test -Punit"
-//     }
-//   }
+  stage("Running unit tests") {
+    dir('search-service') {
+      sh "./mvnw test -Punit"
+    }
+  }
 
   stage("Deployment") {
     dir('search-service') {
