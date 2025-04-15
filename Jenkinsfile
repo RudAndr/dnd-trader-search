@@ -15,16 +15,15 @@ node {
     }
   }
 
-  stage("Tests and Deployment") {
-    stage("Running unit tests") {
-      dir('search-service') {
-        sh "./mvnw test -Punit"
-      }
+  stage("Running unit tests") {
+    dir('search-service') {
+      sh "./mvnw test -Punit"
     }
-    stage("Deployment") {
-      dir('search-service') {
-        sh 'nohup ./mvnw spring-boot:run -Dserver.port=8001 &'
-      }
+  }
+
+  stage("Deployment") {
+    dir('search-service') {
+      sh 'nohup ./mvnw spring-boot:run -Dserver.port=8001 &'
     }
   }
 }
