@@ -1,4 +1,13 @@
 node {
+
+  stage('Checkout Repo') {
+    dir('search-service') {
+      checkout([$class: 'GitSCM',
+                branches: [[name: '*/master']],
+                userRemoteConfigs: [[url: 'https://github.com/RudAndr/dnd-trader-search.git']]])
+    }
+  }
+
   stage("Compilation") {
     dir('search-service') {
       sh 'chmod +x ./mvnw'
