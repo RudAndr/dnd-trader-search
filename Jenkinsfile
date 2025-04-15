@@ -2,7 +2,7 @@ node {
   stage('Checkout Repo') {
     dir('search-service') {
       checkout([$class: 'GitSCM',
-                branches: [[name: '*/main']],
+                branches: [[name: '*/master']],
                 userRemoteConfigs: [[url: 'https://github.com/RudAndr/dnd-trader-search.git']]])
     }
   }
