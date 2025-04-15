@@ -9,6 +9,7 @@ node {
 
   stage("Compilation") {
     dir('search-service') {
+    sh 'chmod +x ./mvnw'
       sh "./mvnw clean install -DskipTests"
     }
   }
