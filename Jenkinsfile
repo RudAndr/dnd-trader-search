@@ -2,11 +2,12 @@ node {
   stage('Checkout Other Repo') {
       steps {
           dir('new-repo') {
-              checkout([$class: 'GitSCM', branches: [[name: '*/main']],
-                        userRemoteConfigs: [[url: 'https://github.com/your/new-repo.git']]])
+              checkout([$class: 'GitSCM', branches: [[name: '*/master']],
+                        userRemoteConfigs: [[url: scm.getUserRemoteConfigs()[0].getUrl()]]])
           }
       }
   }
+
   stage("Clone the project") {
     git branch: 'main', url: scm.getUserRemoteConfigs()[0].getUrl()
   }
