@@ -1,4 +1,12 @@
 node {
+  tools {
+    jdk 'JDK21'
+  }
+
+  environment {
+    PATH = "${tool 'JDK21'}/bin:${env.PATH}"
+  }
+
   stage('Checkout Repo') {
     dir('search-service') {
       checkout([$class: 'GitSCM',
