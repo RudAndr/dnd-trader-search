@@ -3,7 +3,7 @@ node {
     dir('search-service') {
       checkout([$class: 'GitSCM',
                 branches: [[name: '*/main']],
-                userRemoteConfigs: [[url: 'https://github.com/RudAndr/search-service.git']]])
+                userRemoteConfigs: [[url: 'https://github.com/RudAndr/dnd-trader-search.git']]])
     }
   }
 
