@@ -1,11 +1,10 @@
 node {
   stage('Checkout Other Repo') {
-      steps {
-          dir('new-repo') {
-              checkout([$class: 'GitSCM', branches: [[name: '*/master']],
-                        userRemoteConfigs: [[url: scm.getUserRemoteConfigs()[0].getUrl()]]])
-          }
-      }
+    dir('search-service') {
+        checkout([$class: 'GitSCM', branches: [[name: '*/master']],
+                  userRemoteConfigs: [[url: scm.getUserRemoteConfigs()[0].getUrl()]]])
+    }
+
   }
 
   stage("Clone the project") {
